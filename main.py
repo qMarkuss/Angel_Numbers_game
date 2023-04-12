@@ -6,7 +6,6 @@ pygame.init()
 
 win = (800, 400)
 screen = pygame.display.set_mode(win)
-pygame.display.set_caption("Angel Numbers")
 
 # Mainīgie
 fontSmall = pygame.font.Font(None, 36)
@@ -92,48 +91,48 @@ def miniMax(depth, isMaxOrMin):
     if depth == 0 or len(numberList) == 0:
         return 0
 
-    if isMaxOrMin:   # Atkarībā, kurš sāk spēli, datoram tiek piešķirts min or max. Gadijumā, ja dators sāk, tad tas ir min.
-        bestScore = float('-inf')
+    if isMaxOrMin:   # Atkarībā, kurš sāk spēli, datoram tika piešķirts min or max (menuScren funkcijā). Gadijumā, ja dators sāk, tad tas ir min.
+        bestValue = float('-inf')
 
         for i in range(len(numberList)):
             if numberList[i] == 2:   # For loop iziet cauri skaitļu virknei un noņem katru skaitli, kas nav viens. Un izveido temp virkni.
                 tempNumberList = numberList[:]
                 tempNumberList.remove(numberList[i])
 
-                score = miniMax(depth - 1, isMaxOrMin)
-                bestScore = max(score, bestScore)    # Rekursīvi salīdzina vērtibas un atgriež lielāko vērtību.
-        return bestScore
+                value = miniMax(depth - 1, isMaxOrMin)
+                bestValue = max(value, bestValue)    # Rekursīvi salīdzina vērtibas un atgriež lielāko vērtību.
+        return bestValue
     else:
-        bestScore = float('inf')
+        bestValue = float('inf')
 
         for i in range(len(numberList)):
             tempNumberList = numberList[:]
             tempNumberList.remove(numberList[i])
 
-            score = miniMax(depth - 1, isMaxOrMin)
-            bestScore = min(score, bestScore) # Rekursīvi salīdzina vērtibas un atgriež mazāko vērtību.
-        return bestScore
+            value = miniMax(depth - 1, isMaxOrMin)
+            bestValue = min(value, bestValue) # Rekursīvi salīdzina vērtibas un atgriež mazāko vērtību.
+        return bestValue
 
 
-def computerMove():
+def minimaxStart():
     global numberList, playerScores, isPlayerTurn, playerHistory, computerHistory
 
-    bestScore = float('-inf')
-    bestIndex = -1  # Izmanto index, lai vieglāk izsaukt pareizo funkciju pēc tam.
+    bestValue = float('-inf')
+    index = -1  # Izmanto index, lai vieglāk izsaukt pareizo funkciju pēc tam.
 
     for i in range(len(numberList)):
         if numberList[i] == 2:     # For loop iziet cauri skaitļu virknei un noņem katru skaitli, kas nav viens. Un izveido temp virkni, kā arī sāk rekursiju.
             tempNumberList = numberList[:]
             tempNumberList.remove(numberList[i])
-            score = miniMax(3, isMaximizing)
-            if score > bestScore:
-                bestScore = score
-                bestIndex = i
+            value = miniMax(3, isMaximizing)
+            if value > bestValue:
+                bestValue = value
+                index = i
 
-    # Gadijumā, ja ir kāds divnieks sarakstā, tad bestIndex tiek piešķirts to skaits, bet ja nav tad bestIndex kļūst par -1.
+    # Gadijumā, ja ir kāds divnieks sarakstā, tad index tiek piešķirts to skaits, bet ja nav tad index kļūst par -1.
     # Tātad, ja ir kāds divnieks sarakstā, tad algoritms to sadalīs divos divniekos, pretēji, ja nav divnieku, tad izņems no saraksta vieninieku.
-    if bestIndex == -1:
-        removeNumber(numberList[bestIndex])
+    if index == -1:
+        removeNumber(numberList[index])
     else:
         splitNumber()
 
@@ -143,6 +142,7 @@ def computerMove():
 
 def playScreen():
     global gameOver,isPlayerTurn,numberList,playerScores
+    pygame.display.set_caption("PlayScreen")
 
     # Šajā funkcijā ir while loop, kas atkārto sevi bezgalīgi ilgi, kamēr spēle nav beigusies. (while gameOver == false --> run code).
     while not gameOver:
@@ -214,7 +214,7 @@ def playScreen():
             pygame.display.update()
             delay = random.uniform(0.5, 1)
             time.sleep(delay)
-            computerMove()
+            minimaxStart()
 
         # Tiek atsvaidzināts ekrāns, lai parādītu jebkādas izmaiņas
         pygame.display.update()
